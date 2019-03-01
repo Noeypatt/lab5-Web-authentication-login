@@ -2,47 +2,66 @@ var express = require('express'),
   app = express(),
   bodyParser = require('body-parser');
 
-  app.set('views', './views')
-  app.set('view engine', 'ejs')
-
-var session = require('express-session')
-
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 },  //session
-   resave : false, saveUninitialized: false }))
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });    //body-parser
 app.use(express.static(__dirname + '/public'));
 
-app.use(function(req, res, next) {
+var session = require('express-session')                              //session
+
+app.set('views', './views')
+app.set('view engine', 'ejs')
+
+app.use(session({
+  secret: 'keyboard cat', cookie: { maxAge: 60000 },  
+  resave: false, saveUninitialized: false
+}))
+
+app.use(function (req, res, next) {
   var sess = req.session
   next();
 })
 
-app.post('/login', urlencodedParser, function (req, res) {
+app.post('/admin', urlencodedParser, function (req, res) {
   console.log("Login");
-  console.log("User: "+req.body.email);
+  console.log("User: " + req.body.email);
 
-  req.session.email =  req.body.email;
-  req.session.password =  req.body.password;
+  req.session.email = req.body.email;
+  req.session.password = req.body.password;
 
-  if (req.session.email == "5935512027" && req.session.password == '1224') {
-    var email = req.session.email;
-
-    app.get('/admin', function (req, res) {
-      res.render('admin',{ hello: "Hello",login: email,link:'logout'})
-      console.log("Complete");
-    });
+  if (req.session.email == "np@gmail.com" && req.session.password == '1224') {
+    var e = req.session.email;
+    res.render('admin', { hello: "Hello", login: req.session.email, link: 'logout' })
   }
 
   else {
-    app.get('/admin', function (req, res) {                                           //ejs
-      res.render('admin', { hello: "",login: 'Please login first.',link:'login' })
-      console.log("Fail");
-    })
-
+    res.render('admin', { hello: "", login: 'Please login first.', link: 'login' })  //ejs
+    console.log("Fail");
   }
 });
 
+app.get('/admin', urlencodedParser, function (req, res) {                         
+  if (req.session.email == "np@gmail.com" && req.session.password == '1224') {
+    var e = req.session.email;
+    res.render('admin', { hello: "Hello", login: e, link: 'logout' })
+    console.log("Complete");
+  }
+  else {
+    res.render('admin', { hello: "", login: 'Please login first.', link: 'login' })  //ejs
+    console.log("Fail");
+  }
 
+});
+
+
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('destroy session');
+      res.redirect('/form.html');
+    }
+  });
+});
 
 app.listen(8000);
