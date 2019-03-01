@@ -29,20 +29,18 @@ app.post('/admin', urlencodedParser, function (req, res) {
   req.session.password = req.body.password;
 
   if (req.session.email == "np@gmail.com" && req.session.password == '1224') {
-    var e = req.session.email;
     res.render('admin', { hello: "Hello", login: req.session.email, link: 'logout' })
   }
 
   else {
-    res.render('admin', { hello: "", login: 'Please login first.', link: 'login' })  //ejs
-    console.log("Fail");
+    res.render('admin', { hello: "", login: 'Please login first.', link: 'login' })  
   }
 });
 
-app.get('/admin', urlencodedParser, function (req, res) {                         
+app.get('/', urlencodedParser, function (req, res) {                         
   if (req.session.email == "np@gmail.com" && req.session.password == '1224') {
-    var e = req.session.email;
-    res.render('admin', { hello: "Hello", login: e, link: 'logout' })
+
+    res.render('admin', { hello: "Hello", login: req.session.email, link: 'logout' })
     console.log("Complete");
   }
   else {
@@ -52,6 +50,30 @@ app.get('/admin', urlencodedParser, function (req, res) {
 
 });
 
+app.get('/admin', urlencodedParser, function (req, res) {                         
+  if (req.session.email == "np@gmail.com" && req.session.password == '1224') {
+
+    res.render('admin', { hello: "Hello", login: req.session.email, link: 'logout' })
+    console.log("Complete");
+  }
+  else {
+    res.render('admin', { hello: "", login: 'Please login first.', link: 'login' })  //ejs
+    console.log("Fail");
+  }
+
+});
+
+app.get('/', urlencodedParser, function (req, res) {                         
+  if (req.session.email == "np@gmail.com" && req.session.password == '1224') {
+    res.render('admin', { hello: "Hello", login: req.session.email, link: 'logout' })
+    console.log("Complete");
+  }
+  else {
+    res.render('admin', { hello: "", login: 'Please login first.', link: 'login' })  //ejs
+    console.log("Fail");
+  }
+
+});
 
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
